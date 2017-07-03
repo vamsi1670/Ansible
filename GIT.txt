@@ -1,0 +1,130 @@
+GIT is a Distributed version control system
+Central VCS located at one place where people have to check out at one place and make changes whereever necessary.
+Distributed vcs everybody has a local repository and  anybody can view the changes made in the  repository.
+
+After successful  installation we can check the version  by using 
+
+#git --version.
+
+We have to setup the global configuration variables.
+This will give the idea of who is  changing the  code and who is viewing which is useful in developer environment.
+#git config --global user.name "username"
+#git config --global user.email "user-email-id"
+
+to check the configuration list use
+#git config --list
+
+Git Help -- (I have seen this  command ina seperate browser in  my machine)
+#git help <verb>
+#git <verb> --help
+
+Two scenarios people starte using git 
+1.Existing proj and start traking 
+2.Remote existing project start developing on.
+
+
+Initialize repository fron the existing code:
+# git init
+
+.git dir containes everything related to repository.If we ever want to stop tracking our project remove git by using.
+
+#rm -rf .git  (complete git is removed and hence tracking of the project cannot be done.)
+
+Before committing project we can get the status by 
+
+#git status  -- before adding the txt file, if git status is executed
+
+$ git status
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+        GIT.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+after executing git status command after adding the git txt file.  
+
+$ git status
+On branch master
+
+Initial commit
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+
+        new file:   GIT.txt
+
+If we have any personnel preferences to be done to the project.
+If other people check the project and etc,we have to ignore these files to ignore the files we can create a file 
+
+#touch .gitignore --  we can add files to be ignored and we can also use  wild cards.
+After adding the files if we perform to git status we can see the following output.
+
+$ git add .project
+The following paths are ignored by one of your .gitignore files:
+.project
+Use -f if you really want to add them.
+
+
+With git there ar 3 stages 
+1.working directory  (untracked and modified files will be present we can se by using #gitstatus)
+2.staging area (were we organise and want to be commited to repository.we can stage in individual files)
+If we want to add everything in staging area use #git add -A 
+
+$ git status
+On branch master
+
+Initial commit
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+
+        new file:   .gitignore
+        new file:   GIT.txt
+if git commit is used  we can do any chenges in the repository.
+remove files from the staging area 
+# git reset <file name>
+after using this command the file is pulled out from the git.
+
+$ git status
+On branch master
+
+Initial commit
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+
+        new file:   GIT.txt
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+        .gitignore
+To completely remove everything we can use #git reset. 
+
+$ git status
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+        .gitignore
+        GIT.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+If you want to put all the files back again we can use.#git add -A
+
+3.committed files
+
+	
+
+
+
+
+
