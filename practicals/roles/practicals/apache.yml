@@ -1,0 +1,15 @@
+--- #install Httpd on Redhat and Ubuntu 
+- hosts: all
+  become: yes
+  tasks:
+  - name: Install httpd in redhat
+    yum: 
+      name: "{{my_pkg}}"
+      state: present
+    when: ansible_os_family == "RedHat"  
+  - name: Install apache in ubuntu 
+    apt:
+      name: "{{my_pkg}}"
+      state: present
+    when: ansible_os_family == "Debian"
+  

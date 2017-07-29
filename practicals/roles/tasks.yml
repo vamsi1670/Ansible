@@ -1,0 +1,19 @@
+--- 
+# tasks file for dell.apache
+# Install Httpd on Redhat and Ubuntu
+- name: update the packages for ubuntu
+  apt: 
+    update_cache: yes
+  when: ansible_os_family == "Debian"  
+- name: Install httpd on redhat
+  yum:
+    name: "{{ my_pkg_rhel }}"
+    state: present
+  notify: restart httpd service  
+  when: ansible_os_family == "RedHat"
+- name: Install apache on ubuntu
+  apt:
+    name: "{{ my_pkg_deb }}"
+    state: present
+    when: ansible_os_family == "Debian"
+  notify: restart apache service

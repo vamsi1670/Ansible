@@ -1,0 +1,36 @@
+---
+- hosts: localhost
+  become: yes
+  tasks:
+  - name: installing open
+    yum:
+      name:  java-1.8.0-openjdk-headless.x86_64
+      state: present
+  - name: Installing tomcat
+    get_url:
+      url: http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.61/bin/apache-tomcat-7.0.61.tar.gz dest=/opt/apache-tomcat-7.0.61.tar.gz
+      dest: /etc/ansible 
+  - unarchive: 
+      src: apache-tomcat-7.0.61.tar.gz
+      dest: /etc/ansible     
+      owner: ansible
+      mode: 777
+  - name: enable service and start
+    service:
+      name: tomcat
+      state: started
+      enabled: yes
+  - name: Install mysqld
+    yum: 
+      name: mysqld
+      state: present
+  - name: enable service and start
+    service: 
+      name: mysqld
+      state: started
+      enabled: yes
+  - name: download open mrs
+    get_url:
+      url: https://excellmedia.dl.sourceforge.net/project/openmrs/releases/OpenMRS_Platform_2.0.5/openmrs.war
+      dest: /etc/ansible/tomcat/webapps/openmrs.war
+      

@@ -120,7 +120,58 @@ Untracked files:
 nothing added to commit but untracked files present (use "git add" to track)
 If you want to put all the files back again we can use.#git add -A
 
+$ git status
+On branch master
+
+Initial commit
+
+Changes to be committed: ++++++++++++++++++++++++++++++++++++
+  (use "git rm --cached <file>..." to unstage)
+
+        new file:   .gitignore
+        new file:   GIT.txt
+
+
 3.committed files
+
+In order to commit the changes 
+use #git commit -m "initial commit" ("message is to be given")
+
+$ git commit -m"initial commit"
+[master (root-commit) a73870d] initial commit
+ 2 files changed, 134 insertions(+)
+ create mode 100644 .gitignore
+ create mode 100644 GIT.txt
+
+$ git status
+On branch master
+nothing to commit, working tree clean - becz we have have commited those files and there are no files to be modified.
+
+#git log 
+we cansee the commit that we have just made 
+
+#git log
+commit a73870d996142712bca74ffbb7eb1240b5851cfb (HEAD -> master)
+Author: krishi <krishivamsister@gmail.com>
+Date:   Mon Jul 3 14:36:45 2017 +0530
+
+    initial commit
+----------------------------------------------------------------------------------------------------------------------
+Cloning in a remote project.
+Clone ::  Developers are planning to clone a historic liverpool terrace.
+
+Syntax ---
+#git clone <url> <where you want to clone the repository>
+After using this command  a directory by name (wordpress) here will be created.
+
+
+Viewing information about the repository 
+#git remote -v
+- information about the repository
+#git remote -a --lists out the branches in the repository not only in machine but also in remote.
+
+
+
 
 	
 
