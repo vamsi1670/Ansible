@@ -1,0 +1,8 @@
+--- 
+- hosts: all
+- name: start tomcat
+    service: tomcat
+    state: restarted
+- name: start nginx
+    service: nginx
+    state: restarted

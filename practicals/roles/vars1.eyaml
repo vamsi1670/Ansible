@@ -1,0 +1,4 @@
+--- 
+- hosts: all
+my_pkg_deb: nginx
+my_pkg_rhel: tomcat

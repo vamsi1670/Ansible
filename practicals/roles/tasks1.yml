@@ -1,0 +1,24 @@
+--- 
+- hosts: all
+  become: yes
+  tasks:
+  - name: Install Java & tomcat 
+    yum: 
+      name: "{{ items }}"
+      with_items:
+        - java
+        - tomcat
+      state: present
+    when: ansible_os_family == "RedHat"  
+    notify: start tomcat
+  - name: download jenkins 
+    get_url: http://ftp.yz.yamagata-u.ac.jp/pub/misc/jenkins/war-stable/2.60.2/jenkins.war
+    dest: /usr/share/tomcat/webapps/jenkins.war
+    when: ansible_os_family == "RedHat"      
+  - name: Install nginx on ubuntu
+    apt: 
+      name: "{{my_pkg_deb}}"
+      state: present
+    when: ansible_os_family == "Debian"
+    notify: start nginx
+      
