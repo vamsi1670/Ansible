@@ -1,0 +1,107 @@
+--- # Install  lighttpd & php   in centos
+- hosts: c
+  become: yes
+  gather_facts: False 
+  vars:
+    ansible_hostname: 192.168.33.57
+    mysql_root_password: rootroot
+    
+  tasks: 
+  - name: Yum update
+    yum:
+      name: "*"
+      state: latest
+      update_cache: yes
+
+  
+  - name: install repo
+    yum_repository:
+      name: epel
+      description: EPEL YUM Repo
+      baseurl: http://epel.mirror.net.in/epel/6/i386/epel-release-6-8.noarch.rpm
+      state: present
+      enabled: yes
+     
+      
+
+
+  - name: lighttpd lighttpd-fastcgi lighttpd-mod_geoip
+    yum: 
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - lighttpd
+      - lighttpd-fastcgi
+      - lighttpd-mod_geoip
+  
+  - name: Lighttpd Service is running    
+    service:
+      name: lighttpd
+      state: restarted
+      enabled: yes
+
+  - name: Php packages 
+    yum:  
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - php-cli
+      - php-mbstring 
+      - php-pecl-apc
+      - php-pdo
+      - php
+      - php-gd
+      - php-mysql    
+      - php-xml
+      - php-bcmath
+      - php-xmlrpc
+      - php-pear 
+      - php-common
+      - php-devel
+      - php-imap
+  #    - php-suhosin
+      - php-pecl-memcache
+      - mysql-server 
+      - mysql
+      - libselinux-python
+
+  - name: mysqld is running
+    service: 
+      name: mysqld
+      state: started
+      enabled: yes
+  
+  
+  
+  - name: copying template to /etc/lighttpd/lighttpd.conf from lighttpd-conf.j2
+    template: 
+      src: /home/ansible/practicals/Lighttpdweb-server-centos6/lighttpd-conf.j2
+      dest: /etc/lighttpd/lighttpd.conf
+
+
+  - name: copying template to /etc/lighttpd/modules.conf from modules-conf.j2
+    template: 
+      src: /home/ansible/practicals/Lighttpdweb-server-centos6/modules-conf.j2
+      dest: /etc/lighttpd/modules.conf
+
+
+  - name: copying template to /etc/lighttpd/conf.d/fastcgi.conf from fastcgi-conf.j2
+    template: 
+      src: /home/ansible/practicals/Lighttpdweb-server-centos6/fastcgi-conf.j2
+      dest: /etc/lighttpd/conf.d/fastcgi.conf
+
+  - name: Resatting Lighttpd 
+    service: 
+      name: lighttpd 
+      state: restarted
+      enabled: yes
+
+  - name: copying template to /var/www/lighttpd/hello.php from hello-php.j2
+    template: 
+      src: /home/ansible/practicals/Lighttpdweb-server-centos6/hello-php.j2
+      dest: /var/www/lighttpd/hello.php  
+
+  
+
+
+  

@@ -1,0 +1,1 @@
+https://www.cyberciti.biz/faq/centos-install-lighttpd-web-server-with-yum-command/
