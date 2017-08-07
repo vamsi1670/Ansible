@@ -1,0 +1,101 @@
+---
+- hosts: c
+  become: yes
+  gather_facts: False
+  vars:
+    ansible_hostname: 192.168.33.25
+    mysql_root_password: rootroot
+
+  tasks: 
+
+  - name: Install EPEL
+    get_url: 
+      url: https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+      dest: /tmp/epel-release-latest-6.noarch.rpm
+
+  - name: install repo
+    command: rpm -ivh /tmp/epel-release-latest-6.noarch.rpm creates=/etc/yum.repos.d/epel.repo
+
+  - name: install pip
+    yum: 
+       name: python-pip
+       state: present
+       
+  - name: yum update
+    yum: 
+      name: "*"
+      state: latest
+      update_cache: yes
+
+  - name: Install Multiple Pkg 
+    yum: 
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - httpd 
+      - mysql-server
+      - php 
+      - php-mysql
+      - libselinux-python 
+
+    
+  - name: Install the Python MySQLB module
+    command: yum install pip MySQL-python -y
+  
+
+  - name: Service start httpd
+    service: 
+      name: "{{ item }}" 
+      state: started
+      enabled: true
+    with_items:
+      - httpd
+      - mysqld
+
+
+
+# - name: Removes anonymous user account for localhost
+#   mysql_user:
+#     name: ''
+#     host: localhost
+#     state: absent
+  
+ 
+# - name: Removes all anonymous user accounts
+#   mysql_user:
+#     name: ''
+#     host_all: yes
+#     state: absent
+
+
+
+  - name: Change root user password on first run
+    mysql_user: 
+      name: root 
+      host: "{{ item }}" 
+      password: "{{ mysql_root_password }}"
+      login_user: root
+      login_password: "{{ mysql_root_password }}"
+      check_implicit_admin: yes
+      priv: '*.*:ALL,GRANT'
+
+    with_items:
+      - "{{ ansible_hostname }}"
+      - 127.0.0.1
+      - ::1
+      - localhost
+
+
+
+
+
+
+  - name: configuring php admin
+    template: 
+      src: phpMyAdmin-conf.j2
+      dest: /etc/httpd/conf.d/phpMyAdmin.conf
+
+  - name: httpd service restart
+    service: 
+      name: httpd
+      state: restarted

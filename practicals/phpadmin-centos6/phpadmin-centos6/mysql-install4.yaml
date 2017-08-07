@@ -1,0 +1,182 @@
+---
+- hosts: c
+  become: yes
+  gather_facts: False
+  vars:
+    ansible_hostname: 192.168.33.65
+    mysql_root_password: rootroot
+
+  tasks: 
+
+  - name: Install EPEL
+    get_url: 
+      url: https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+      dest: /tmp/epel-release-latest-6.noarch.rpm
+
+  - name: install repo
+    command: rpm -ivh /tmp/epel-release-latest-6.noarch.rpm creates=/etc/yum.repos.d/epel.repo
+
+  - name: install pip
+    yum: 
+       name: python-pip
+       state: present
+       
+  - name: yum update
+    yum: 
+      name: "*"
+      state: latest
+      update_cache: yes
+
+  - name: Install Multiple Pkg 
+    yum: 
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - httpd 
+      - mysql-server
+      - php 
+      - php-mysql
+      - libselinux-python 
+      - php-gd
+
+
+    
+  - name: Install the Python MySQLB module
+    command: yum install pip MySQL-python -y
+
+  
+
+  - name: Service start httpd
+    service: 
+      name: "{{ item }}" 
+      state: started
+      enabled: true
+    with_items:
+      - httpd
+      - mysqld
+      
+  
+
+
+
+# - name: Removes anonymous user account for localhost
+#   mysql_user:
+#     name: ''
+#     host: localhost
+#     state: absent
+  
+ 
+# - name: Removes all anonymous user accounts
+#   mysql_user:
+#     name: ''
+#     host_all: yes
+#     state: absent
+
+  - name: Copying php file
+    template: 
+      src: infophp.j2
+      dest: /var/www/html/info.php
+
+  - name: Change root user password on first run
+    mysql_user: 
+      name: root 
+      host: "{{ item }}" 
+      password: "{{ mysql_root_password }}"
+      login_user: root
+      login_password: "{{ mysql_root_password }}"
+      check_implicit_admin: yes
+      priv: '*.*:ALL,GRANT'
+
+    with_items:
+      - "{{ ansible_hostname }}"
+      - 127.0.0.1
+      - ::1
+      - localhost
+
+
+  - name: httpd service restart
+    service: 
+      name: httpd
+      state: restarted
+
+
+  - name: Download wordpress
+    get_url: 
+      url: http://wordpress.org/latest.tar.gz
+      dest: /home/ansible/latest.tar.gz
+      owner: ansible
+      group: ansible
+      recursive: yes
+      mode: 0776
+
+  - name: untar wordpress
+    command: tar -xzvf latest.tar.gz
+  
+  - name: Creating wordpress database
+    mysql_db:
+      name: wordpress
+      state: present
+      login_user: root
+      login_host: localhost
+      login_password: "{{ mysql_root_password }}"
+
+  - name: Grantng Privillage to wordpress user
+    mysql_user:
+      name: user
+      password: "{{ mysql_root_password }}"
+      login_user: root
+      login_password: "{{ mysql_root_password }}"
+      priv: '*.*:ALL'
+      state: present
+      host: localhost
+      sql_log_bin: yes
+  
+  - name: coying wp-config-sample.php file as wp-config.php
+    copy:
+      src: /home/ansible/wordpress/wp-config-sample.php
+      dest: /wordpress/wp-config.php
+      owner: ansible
+      group: ansible
+      mode: 0776
+      backup: yes
+
+  - name: Copying  ~/wordpress/wp-config.j2 file in to ~/wordpress/wp-config.php
+    template: 
+      src: /home/ansible/wordpress/wp-config.j2
+      dest: /home/ansible/wordpress/wp-config.php
+      owner: ansible
+      group: ansible
+      mode: 0776
+
+  - name: copy files to html
+    copy:
+      src: /home/ansible/wordpress/*
+      dest: /var/www/html/
+      owner: ansible 
+      group: ansible
+      mode: 0776
+      backup: yes
+
+  - name: service restart
+    service: 
+      name: httpd
+      state: restarted
+
+
+
+    
+
+
+
+
+  
+
+
+
+
+
+
+
+     
+
+
